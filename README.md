@@ -173,28 +173,6 @@ aᵢ = (y_{i+k} − yᵢ) / (x_{i+k} − xᵢ),   i = 1…k
 
 ---
 
-## Развёртывание на GitHub Pages
-
-```bash
-# 1. Создайте репозиторий на GitHub
-# 2. Загрузите файлы
-git init
-git add lab215.html README.md
-git commit -m "feat: add lab 2.15 bandgap calculator"
-git branch -M main
-git remote add origin https://github.com/your-username/lab215.git
-git push -u origin main
-
-# 3. Settings → Pages → Source: Deploy from branch → main → / (root)
-```
-
-После этого сайт будет доступен по адресу:
-```
-https://your-username.github.io/lab215/lab215.html
-```
-
----
-
 ## Структура репозитория
 
 ```
