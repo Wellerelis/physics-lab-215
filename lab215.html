@@ -1,0 +1,1272 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Работа 2.15 — Ширина запрещённой зоны германиевого полупроводника</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#102C26;--navy2:#1a3d35;--navy3:#234f44;
+  --silver:#F7E7CE;--silver2:#f0ddc0;--silver3:#e8d0a8;--silver-bg:#fdf6ea;
+  --white:#ffffff;--ink:#0e1f1b;--ink2:#3a5048;--ink3:#7a9a92;
+  --border:rgba(16,44,38,0.12);--border2:rgba(16,44,38,0.06);
+  --red:#8b2e1a;--red-bg:#fdf2ee;
+  --gold:#8a6020;--gold-bg:#fdf8ed;
+  --green-ok:#1a5a30;--green-bg:#eef7f1;
+  --warn:#7a5c00;--warn-bg:#fdf8ed;
+  --mono:'DM Mono','Courier New',monospace;
+  --sans:'DM Sans',system-ui,sans-serif;
+  --display:'Syne',system-ui,sans-serif;
+  /* short aliases для совместимости с JS */
+  --F:#102C26;--F2:#1a3d35;--F3:#234f44;
+  --C:#F7E7CE;--C3:#e8d0a8;--CB:#fdf6ea;
+  --W:#ffffff;--I:#0e1f1b;--I2:#3a5048;--I3:#7a9a92;
+  --BD:rgba(16,44,38,0.12);--BD2:rgba(16,44,38,0.06);
+  --R:#8b2e1a;--RB:#fdf2ee;--G:#8a6020;--GB:#fdf8ed;
+  --OK:#1a5a30;--OB:#eef7f1;--WN:#7a5c00;--WB:#fdf8ed;
+}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--silver-bg);color:var(--ink);font-size:14px;line-height:1.65;-webkit-font-smoothing:antialiased}
+
+/* ── HEADER / NAV ── */
+.hdr{background:var(--navy);color:var(--silver);padding:0 48px;height:62px;display:flex;align-items:center;gap:24px;position:sticky;top:0;z-index:300}
+.badge{font-family:var(--mono);font-size:10px;letter-spacing:2px;text-transform:uppercase;background:rgba(232,238,247,.12);border:1px solid rgba(232,238,247,.25);color:var(--silver);padding:4px 12px;border-radius:2px;flex-shrink:0}
+.hdr h1{font-family:var(--display);font-size:16px;font-weight:700;letter-spacing:-0.3px;color:var(--silver);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hdr-m{margin-left:auto;font-size:11px;color:rgba(232,238,247,.4);font-weight:300;letter-spacing:.5px;white-space:nowrap;flex-shrink:0}
+.nav{background:var(--navy);border-bottom:1px solid rgba(232,238,247,.1);padding:0 48px;display:flex;position:sticky;top:62px;z-index:200;overflow-x:auto;gap:0}
+.nav::-webkit-scrollbar{display:none}
+.nb{font-family:var(--display);font-size:11px;font-weight:500;letter-spacing:1px;color:rgba(232,238,247,.45);padding:14px 22px;border:none;background:none;border-bottom:2px solid transparent;margin-bottom:-1px;cursor:pointer;white-space:nowrap;transition:color .2s,border-color .2s;text-transform:uppercase}
+.nb:hover{color:rgba(232,238,247,.75)}.nb.on{color:var(--silver);border-bottom-color:var(--silver2)}
+
+/* ── LAYOUT ── */
+.wrap{max-width:1120px;margin:0 auto;padding:36px 48px 96px}
+.tab{display:none}.tab.on{display:block}
+.pg-t{font-family:var(--display);font-size:28px;font-weight:800;letter-spacing:-1px;color:var(--navy);margin-bottom:6px;line-height:1.1}
+.pg-s{font-size:13px;color:var(--ink3);margin-bottom:32px;font-weight:300}
+.sec{display:flex;align-items:center;gap:14px;margin:36px 0 16px}
+.sec-n{font-family:var(--mono);font-size:10px;font-weight:500;color:var(--silver2);background:var(--navy);padding:3px 9px;border-radius:2px;letter-spacing:1px}
+.sec-t{font-family:var(--display);font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--ink2)}
+.sec-l{height:1px;flex:1;background:var(--border)}
+
+/* ── CARD ── */
+.card{background:var(--white);border:1px solid var(--border);border-radius:8px;margin-bottom:16px;overflow:hidden;box-shadow:0 1px 3px rgba(13,31,60,.06)}
+.ch{padding:13px 20px;border-bottom:1px solid var(--border2);font-family:var(--display);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--ink2);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;background:rgba(232,238,247,.35)}
+.ch.dk{background:var(--navy);color:var(--silver);border-bottom:none}
+.cb{padding:22px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+@media(max-width:720px){.g2,.g3,.g4{grid-template-columns:1fr}}
+
+/* ── FIELDS ── */
+.fld{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}
+.fld:last-child{margin-bottom:0}
+.fld label{font-family:var(--display);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--ink2);display:flex;align-items:center;gap:6px}
+.fld label .u{font-weight:400;text-transform:none;color:var(--ink3);letter-spacing:0;font-family:var(--sans)}
+.fld input[type=number],.fld input[type=text]{font-family:var(--mono);font-size:14px;background:var(--silver-bg);border:1.5px solid var(--border);border-radius:5px;padding:9px 13px;color:var(--ink);outline:none;width:100%;transition:border-color .15s,box-shadow .15s,background .15s}
+.fld input:focus{border-color:var(--navy);box-shadow:0 0 0 3px rgba(13,31,60,.08);background:var(--white)}
+.fld input:disabled{opacity:.55;cursor:default}
+.fld .hint{font-size:11px;color:var(--ink3);font-weight:300}
+.drv{background:rgba(13,31,60,.04);border:1.5px solid rgba(13,31,60,.14);border-radius:6px;padding:12px 18px;margin-top:16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.dl{font-family:var(--display);font-size:12px;font-weight:700;color:var(--navy)}
+.de{color:var(--ink3);font-size:12px}
+.dv{font-family:var(--mono);font-size:17px;font-weight:500;color:var(--navy)}
+
+/* ── TABLES ── */
+.tw{overflow-x:auto}
+table.dt{width:100%;border-collapse:collapse;font-size:13px}
+table.dt th{font-family:var(--display);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--silver);background:var(--navy);padding:11px 14px;text-align:center;white-space:nowrap;border-right:1px solid rgba(232,238,247,.1)}
+table.dt th:last-child{border-right:none}
+table.dt td{border-bottom:1px solid var(--border2);text-align:center;vertical-align:middle;padding:2px 4px}
+table.dt tr:hover td{background:rgba(232,238,247,.45)}
+table.dt td input.ci{font-family:var(--mono);font-size:13px;border:1.5px solid transparent;border-radius:4px;padding:6px 8px;width:100px;text-align:center;background:transparent;color:var(--ink);outline:none;transition:border-color .12s,background .12s}
+table.dt td input.ci:focus{border-color:var(--navy);background:var(--white)}
+table.dt td.c2{font-family:var(--mono);font-size:12px;color:var(--navy);padding:8px 12px;font-weight:500}
+table.dt td.hi{font-family:var(--mono);font-size:12px;color:var(--navy);padding:8px 12px;font-weight:600}
+table.dt td.wc{color:var(--warn);font-weight:600}
+table.dt td select{font-family:var(--mono);font-size:11px;border:1.5px solid var(--border);border-radius:4px;padding:5px 8px;background:var(--silver-bg);color:var(--ink);outline:none;cursor:pointer}
+table.dt td .db{background:none;border:none;cursor:pointer;color:var(--ink3);font-size:16px;padding:4px 10px;border-radius:4px;transition:color .12s,background .12s;line-height:1}
+table.dt td .db:hover{color:var(--red);background:var(--red-bg)}
+/* Params summary table */
+.pt{width:100%;border-collapse:collapse;font-size:13px}
+.pt td{padding:9px 16px;border-bottom:1px solid var(--border2)}
+.pt tr:last-child td{border-bottom:none}
+.pt td:first-child{font-family:var(--mono);font-weight:500;color:var(--navy);width:70px;font-size:12px}
+.pt td:nth-child(2){font-family:var(--mono);color:var(--ink);font-weight:400}
+.pt td:nth-child(3){color:var(--ink3);font-size:11px;width:50px}
+.pt td:nth-child(4){color:var(--ink3);font-size:11px;text-align:right;font-weight:300}
+
+/* ── FORMULA BLOCKS ── */
+.fm{border:1.5px solid var(--border);border-left:4px solid var(--navy);border-radius:0 6px 6px 0;padding:16px 20px;margin:12px 0;background:rgba(232,238,247,.18);line-height:1.9}
+.fn{font-family:var(--display);font-size:10px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:6px}
+.fe{font-family:var(--mono);font-size:15px;font-weight:500;color:var(--navy);margin-bottom:4px}
+.fe.hi{color:var(--red)}
+.fs{font-size:12px;color:var(--ink2);margin-top:4px;font-weight:300}
+.fr{display:inline-block;background:rgba(13,31,60,.06);border:1.5px solid rgba(13,31,60,.15);border-radius:5px;padding:7px 16px;font-family:var(--mono);font-size:14px;font-weight:500;color:var(--navy);margin-top:12px}
+
+/* ── NOTICES ── */
+.nt{border-radius:6px;padding:11px 16px;font-size:13px;margin-bottom:14px;display:flex;align-items:flex-start;gap:10px;font-weight:300;line-height:1.6}
+.nt.i{background:rgba(13,31,60,.06);border:1.5px solid rgba(13,31,60,.15);color:var(--ink2)}
+.nt.w{background:var(--warn-bg);border:1.5px solid #e8d090;color:var(--warn)}
+.nt.ok{background:var(--green-bg);border:1.5px solid #a8d8b0;color:var(--green-ok)}
+.nt.bad{background:var(--red-bg);border:1.5px solid #f0b8b0;color:var(--red)}
+
+/* ── BIG RESULT ── */
+.br{background:var(--navy);border-radius:8px;padding:22px 28px;display:flex;align-items:center;gap:22px;margin:18px 0}
+.br .sym{font-family:'Syne',Georgia,serif;font-size:40px;font-weight:800;color:var(--silver);opacity:.7;min-width:46px;font-style:italic}
+.br .lbl{font-family:var(--display);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:rgba(232,238,247,.55);margin-bottom:5px}
+.br .val{font-family:var(--mono);font-size:22px;font-weight:500;color:var(--silver)}
+
+/* ── CHIPS ── */
+.chips{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+.chip{background:var(--silver-bg);border:1.5px solid var(--border);border-radius:6px;padding:10px 16px;min-width:130px;transition:border-color .15s}
+.chip:hover{border-color:var(--navy)}
+.chip.hl{background:var(--navy);border-color:var(--navy)}
+.chip .cl{font-family:var(--display);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--ink3);margin-bottom:4px}
+.chip.hl .cl{color:rgba(232,238,247,.5)}
+.chip .cv{font-family:var(--mono);font-size:15px;font-weight:500;color:var(--ink)}
+.chip.hl .cv{color:var(--silver)}
+
+/* ── CHART ── */
+.chwrap{position:relative;height:460px;background:var(--white);border-radius:6px;overflow:hidden}
+
+/* ── SCALE BUTTONS ── */
+.sr{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.sr .lb{font-family:var(--display);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:rgba(232,238,247,.5)}
+.sb{padding:4px 12px;border:1px solid rgba(232,238,247,.2);border-radius:3px;background:transparent;font-family:var(--mono);font-size:11px;cursor:pointer;color:rgba(232,238,247,.55);transition:all .12s}
+.sb:hover,.sb.on{background:rgba(232,238,247,.15);color:var(--silver);border-color:rgba(232,238,247,.5)}
+
+/* ── BUTTONS ── */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 18px;border-radius:5px;font-family:var(--display);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;cursor:pointer;border:1.5px solid transparent;transition:all .15s}
+.btn-o{background:transparent;color:var(--ink2);border-color:var(--border)}.btn-o:hover{border-color:var(--navy);color:var(--navy)}
+.btn-s{background:var(--navy);color:var(--silver);border-color:var(--navy)}.btn-s:hover{background:var(--navy2)}
+.pptb{padding:5px 14px;border:1px solid var(--border);border-radius:4px;background:transparent;font-family:var(--mono);font-size:11px;cursor:pointer;color:var(--ink2);transition:all .12s}
+.pptb:hover,.pptb.on{background:var(--navy);color:var(--silver);border-color:var(--navy)}
+
+/* ── RESULT LINES ── */
+.rls{display:flex;flex-direction:column}
+.rl{display:flex;align-items:baseline;gap:8px 12px;padding:9px 0;border-bottom:1px solid var(--border2);flex-wrap:wrap}
+.rl:last-child{border-bottom:none}
+.rll{font-size:13px;color:var(--ink2);flex:1 1 200px;min-width:0;font-weight:400}
+.rlv{font-family:var(--mono);font-size:14px;font-weight:500;color:var(--navy);white-space:nowrap}
+.rlp{font-size:11px;color:var(--ink3);font-weight:300;white-space:nowrap;margin-left:auto}
+
+/* ── SLIDERS ── */
+.rr{display:flex;align-items:center;gap:12px;margin-bottom:12px;flex-wrap:wrap}
+.rr label{font-size:12px;color:var(--ink2);font-weight:500;min-width:160px}
+.rr input[type=range]{-webkit-appearance:none;height:4px;background:var(--border);border-radius:2px;flex:1;min-width:100px}
+.rr input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:var(--navy);cursor:pointer}
+.rv{font-family:var(--mono);font-size:12px;color:var(--navy);font-weight:500;min-width:180px}
+.ri{padding:10px 14px;background:var(--gold-bg);border:1px solid rgba(138,96,32,.2);border-radius:4px;font-size:12px;color:var(--gold);margin-top:8px}
+
+/* ── PROTOCOL ── */
+.proto{background:var(--navy);border-radius:8px;padding:32px 36px;font-family:var(--mono);font-size:12px;line-height:2;white-space:pre-wrap;overflow-x:auto;max-height:700px;overflow-y:auto;color:rgba(232,238,247,.85)}
+.proto::-webkit-scrollbar{width:6px;height:6px}
+.proto::-webkit-scrollbar-track{background:rgba(255,255,255,.05)}
+.proto::-webkit-scrollbar-thumb{background:rgba(232,238,247,.2);border-radius:3px}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:28px;right:28px;background:var(--navy);color:var(--silver);padding:11px 22px;border-radius:6px;font-family:var(--display);font-size:12px;font-weight:600;letter-spacing:.5px;opacity:0;transform:translateY(10px);transition:all .22s cubic-bezier(.16,1,.3,1);pointer-events:none;z-index:999;box-shadow:0 8px 24px rgba(13,31,60,.3)}
+.toast.show{opacity:1;transform:translateY(0)}
+
+@media(max-width:768px){.wrap{padding:18px 18px 72px}.g2,.g3,.g4{grid-template-columns:1fr}.hdr,.nav{padding-left:18px;padding-right:18px}}
+</style>
+</head>
+<body>
+
+<header class="hdr">
+  <div class="badge">2.15</div>
+  <h1>Ширина запрещённой зоны германиевого полупроводника</h1>
+  <span class="hdr-m">СПбПУ · Ge · Модуль Холла</span>
+</header>
+<nav class="nav">
+  <button class="nb on" onclick="go('params',this)">Параметры</button>
+  <button class="nb"    onclick="go('theory',this)">Теория</button>
+  <button class="nb"    onclick="go('meas',this)">Измерения</button>
+  <button class="nb"    onclick="go('calc',this)">Обработка</button>
+  <button class="nb"    onclick="go('proto',this)">Протокол</button>
+</nav>
+
+<div class="wrap">
+
+<!-- ═══════════════════════════════════════
+     ТАБ 1 — ПАРАМЕТРЫ
+═══════════════════════════════════════ -->
+<div id="tab-params" class="tab on">
+  <div class="pg-t">Параметры установки</div>
+  <div class="pg-s">Геометрия образца · вольтметр · константы</div>
+
+  <div class="g2">
+    <!-- Образец -->
+    <div class="card">
+      <div class="ch">Образец нелегированного Ge</div>
+      <div class="cb">
+        <div class="g2">
+          <div class="fld">
+            <label>l <span class="u">длина, м</span></label>
+            <input type="number" id="p_l" value="0.020" step="0.001" min="0.001" onchange="recalc()">
+            <div class="hint">20 мм = 0.020</div>
+          </div>
+          <div class="fld">
+            <label>b <span class="u">ширина, м</span></label>
+            <input type="number" id="p_b" value="0.010" step="0.001" min="0.001" onchange="recalc()">
+            <div class="hint">10 мм = 0.010</div>
+          </div>
+          <div class="fld">
+            <label>d <span class="u">толщина, м</span></label>
+            <input type="number" id="p_d" value="0.001" step="0.0001" min="0.0001" onchange="recalc()">
+            <div class="hint">1 мм = 0.001</div>
+          </div>
+          <div class="fld">
+            <label>I <span class="u">ток образца, А</span></label>
+            <input type="number" id="p_I" value="0.005" step="0.001" min="0.0001" onchange="recalc()">
+            <div class="hint">5 мА = 0.005</div>
+          </div>
+          <div class="fld">
+            <label>δl <span class="u">погрешн., %</span></label>
+            <input type="number" id="p_dL" value="1.0" step="0.5" min="0" onchange="recalc()">
+          </div>
+          <div class="fld">
+            <label>δA <span class="u">погрешн. A, %</span></label>
+            <input type="number" id="p_dA" value="2.0" step="0.5" min="0" onchange="recalc()">
+            <div class="hint">δA ≈ √(δb² + δd²)</div>
+          </div>
+        </div>
+        <div class="drv"><span class="dl">A = b·d</span><span class="de">=</span><span class="dv" id="v_A">—</span><span class="dl">м²</span></div>
+        <div class="drv"><span class="dl">l / A</span><span class="de">=</span><span class="dv" id="v_lA">—</span><span class="dl">м⁻¹</span></div>
+      </div>
+    </div>
+
+    <div>
+      <!-- Вольтметр -->
+      <div class="card">
+        <div class="ch">Вольтметр · U<sub>P</sub></div>
+        <div class="cb">
+          <div class="nt w" style="margin-bottom:14px">
+            <span>⚠</span>
+            <span>U<sub>P</sub> <strong>экспоненциально</strong> растёт при охлаждении. Своевременно переключайте предел вольтметра.</span>
+          </div>
+          <div class="g2">
+            <div class="fld">
+              <label>Класс точности <span class="u">%</span></label>
+              <input type="number" id="p_vmC" value="1.0" step="0.5" min="0.1" max="5" onchange="recalc()">
+              <div class="hint">ΔU = класс% × предел</div>
+            </div>
+            <div class="fld">
+              <label>δI <span class="u">погрешн. тока, %</span></label>
+              <input type="number" id="p_dI" value="1.0" step="0.5" min="0" onchange="recalc()">
+            </div>
+          </div>
+          <div style="font-size:11px;font-weight:600;color:var(--I2);margin:10px 0 6px">Погрешность по пределам:</div>
+          <div id="vmsum"></div>
+        </div>
+      </div>
+      <!-- Константы -->
+      <div class="card">
+        <div class="ch">Физические константы</div>
+        <div class="cb">
+          <div class="g2">
+            <div class="fld"><label>k <span class="u">Дж/К</span></label><input type="text" value="1.381×10⁻²³" disabled><div class="hint">постоянная Больцмана</div></div>
+            <div class="fld"><label>E<sub>g</sub>(табл.) <span class="u">эВ</span></label><input type="text" value="0.66" disabled><div class="hint">Ge при 300 К</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="ch">Сводка параметров (СИ)</div>
+    <div class="cb" style="padding:0"><table class="pt"><tbody id="ptbody"></tbody></table></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     ТАБ 2 — ТЕОРИЯ
+═══════════════════════════════════════ -->
+<div id="tab-theory" class="tab">
+  <div class="pg-t">Теоретические основы</div>
+  <div class="pg-s">Температурная зависимость электропроводности полупроводника</div>
+
+  <div class="fm"><div class="fn">Удельная проводимость через ток и напряжение</div><div class="fe hi">σ = I · l / (A · U<sub>P</sub>)</div><div class="fs">I — ток [А], l — длина [м], A = b·d — сечение [м²], U<sub>P</sub> — продольное напряжение [В], σ [Ом⁻¹·м⁻¹]</div></div>
+  <div class="fm"><div class="fn">Три области кривой ln σ = f(1/T)</div><div class="fe">I. Примесная проводимость — низкие T (изогнутый участок)</div><div class="fe">II. Истощение примесей — переходная зона</div><div class="fe hi">III. Собственная проводимость — высокие T → <u>линейный участок</u></div></div>
+  <div class="fm"><div class="fn">Экспоненциальный закон (область III)</div><div class="fe hi">σ = σ₀ · exp(−E<sub>g</sub> / 2kT)</div><div class="fs">E<sub>g</sub> — ширина запрещённой зоны [Дж], k = 1.381×10⁻²³ Дж/К</div></div>
+  <div class="fm"><div class="fn">Логарифмирование → линейная зависимость</div><div class="fe hi">ln σ = ln σ₀  −  (E<sub>g</sub>/2k) · (1/T)</div><div class="fs">Наклон прямой: b = −E<sub>g</sub>/(2k)</div></div>
+  <div class="fm"><div class="fn">Рабочая формула (ось 1000/T)</div><div class="fe hi">E<sub>g</sub> = −2k · (b / 1000)  [Дж]</div><div class="fs">b — угловой коэффициент графика ln σ = f(1000/T) по методу парных точек</div></div>
+  <div class="fm" style="border-left-color:var(--R)"><div class="fn">Перевод в электронвольты</div><div class="fe hi">E<sub>g</sub> [эВ] = E<sub>g</sub> [Дж] / 1.602×10⁻¹⁹</div></div>
+  <div class="fm" style="border-left-color:var(--G)">
+    <div class="fn">Погрешности</div>
+    <div class="fe">δσ = √(δU<sub>P</sub>² + δI² + δl² + δA²)  — относительная</div>
+    <div class="fe">δE<sub>g</sub> = δb = Δb / |⟨b⟩|</div>
+    <div class="fe">ΔE<sub>g</sub> [Дж] = |E<sub>g</sub>| · δb,  &nbsp;ΔE<sub>g</sub> [эВ] = ΔE<sub>g</sub> [Дж] / e</div>
+    <div class="fs">δU<sub>P</sub> = ΔU / U<sub>P</sub> — меняется от строки к строке</div>
+  </div>
+  <div class="nt i"><span>ℹ</span><span>Табличное значение ширины запрещённой зоны нелегированного Ge: <strong>E<sub>g</sub> = 0.66 эВ</strong> при T ≈ 300 К.</span></div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     ТАБ 3 — ИЗМЕРЕНИЯ
+═══════════════════════════════════════ -->
+<div id="tab-meas" class="tab">
+  <div class="pg-t">Таблица 1. Измерения</div>
+  <div class="pg-s">T в °C · U<sub>P</sub> в мВ · выберите предел вольтметра · нажмите Enter для пересчёта строки</div>
+
+  <div class="nt w">
+    <span>⚠</span>
+    <div>
+      <strong>Порядок (по методичке):</strong><br>
+      • Данные снимают при <strong>охлаждении</strong> от 170 °C<br>
+      • 170 → 100 °C через <strong>10 °C</strong>; &nbsp; 100 → 25 °C через <strong>5 °C</strong><br>
+      • Ток I = 5 мА поддерживать постоянным (ручка 1, индикатор 2, кнопка 7 нажата)<br>
+      • U<sub>P</sub> растёт экспоненциально — переключайте предел вольтметра заблаговременно
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="ch dk">
+      <span style="color:var(--C);opacity:.85">Прямые измерения</span>
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+        <button class="btn btn-o" onclick="addRow()" style="font-size:10px;padding:5px 12px;color:rgba(247,231,206,.75);border-color:rgba(247,231,206,.25)">+ строка</button>
+        <button class="btn btn-o" onclick="fillDemo()" style="font-size:10px;padding:5px 12px;color:rgba(247,231,206,.45);border-color:rgba(247,231,206,.15)">демо-данные</button>
+      </div>
+    </div>
+    <div class="nt i" style="margin:10px 14px 0;font-size:12px">
+      <span>ℹ</span>
+      <span>Жёлтый цвет U<sub>P</sub> — значение &gt; 80 % предела. Нажмите Enter/Tab для пересчёта строки. Расчётные столбцы обновляются автоматически.</span>
+    </div>
+    <div class="tw">
+      <table class="dt">
+        <thead><tr>
+          <th>№</th>
+          <th>T<sub>P</sub>, °C</th>
+          <th>U<sub>P</sub>, мВ</th>
+          <th>Предел</th>
+          <th>ΔU, мВ</th>
+          <th>δU, %</th>
+          <th>δσ, %</th>
+          <th>T, К</th>
+          <th>1000/T, К⁻¹</th>
+          <th>σ, См·м⁻¹</th>
+          <th>ln σ</th>
+          <th></th>
+        </tr></thead>
+        <tbody id="mbody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     ТАБ 4 — ОБРАБОТКА
+═══════════════════════════════════════ -->
+<div id="tab-calc" class="tab">
+  <div class="pg-t">Обработка</div>
+  <div class="pg-s">График ln σ = f(1000/T) · метод парных точек · E<sub>g</sub></div>
+
+  <!-- 00 Выбор участка -->
+  <div class="sec"><span class="sec-n">00</span><span class="sec-t">Выбор линейного участка</span><span class="sec-l"></span></div>
+  <div class="card">
+    <div class="ch">Область собственной проводимости (высокие T, малые 1000/T)</div>
+    <div class="cb">
+      <div class="nt w"><span>⚠</span><span>Выберите только <strong>линейный участок</strong> при высоких T. Исключите изогнутые точки при низких T (примесная проводимость).</span></div>
+      <div class="rr">
+        <label>Первая точка (от):</label>
+        <input type="range" id="rfrom" min="0" max="0" value="0" oninput="onSlider()">
+        <span class="rv" id="rvfrom">—</span>
+      </div>
+      <div class="rr">
+        <label>Последняя точка (до):</label>
+        <input type="range" id="rto" min="0" max="0" value="0" oninput="onSlider()">
+        <span class="rv" id="rvto">—</span>
+      </div>
+      <div class="ri" id="rinfo">Нет данных. Введите измерения на вкладке «Измерения».</div>
+    </div>
+  </div>
+
+  <!-- 01 График -->
+  <div class="sec"><span class="sec-n">01</span><span class="sec-t">График ln σ = f(1000/T)</span><span class="sec-l"></span></div>
+  <div class="card">
+    <div class="ch dk">
+      <span style="color:var(--C);opacity:.85">Серые — все точки · зелёные — линейный участок · красная — МНК</span>
+      <div class="sr">
+        <span class="lb" style="color:rgba(247,231,206,.5)">Шаг:</span>
+        <button class="sb on" id="sc-auto" onclick="setScale('auto',this)">авто</button>
+        <button class="sb"   id="sc-1"    onclick="setScale('1',this)">×1</button>
+        <button class="sb"   id="sc-2"    onclick="setScale('2',this)">×2</button>
+        <button class="sb"   id="sc-5"    onclick="setScale('5',this)">×5</button>
+      </div>
+    </div>
+    <div class="cb" style="padding:16px">
+      <div class="chwrap"><canvas id="gc"></canvas></div>
+      <div class="chips">
+        <div class="chip hl"><div class="cl">Уравнение МНК</div><div class="cv" id="c_eq">—</div></div>
+        <div class="chip hl"><div class="cl">Наклон b</div><div class="cv" id="c_b">—</div></div>
+        <div class="chip"><div class="cl">Своб. член a₀</div><div class="cv" id="c_a">—</div></div>
+        <div class="chip"><div class="cl">R²</div><div class="cv" id="c_r2">—</div></div>
+        <div class="chip"><div class="cl">Точек МНК</div><div class="cv" id="c_n">—</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 02 МПТ -->
+  <div class="sec"><span class="sec-n">02</span><span class="sec-t">Метод парных точек</span><span class="sec-l"></span></div>
+  <div class="nt i">
+    Точки делятся на две половины. Для пары (i, i+k): <strong>b<sub>i</sub> = Δ(ln σ) / Δ(1000/T)</strong>.
+    &nbsp;σ⟨b⟩ = √(Σ(b<sub>i</sub>−⟨b⟩)² / k(k−1)), &nbsp;Δb = t(P=0.90, f=k−1)·σ⟨b⟩
+  </div>
+  <div class="card">
+    <div class="ch">Таблица попарных наклонов b<sub>i</sub></div>
+    <div class="cb" style="padding-bottom:10px">
+      <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:16px">
+        <span style="font-size:12px;font-weight:600;color:var(--I2)">Крайние точки:</span>
+        <button class="pptb on" id="ppt0" onclick="setPpTrim(0)">Все (1…n)</button>
+        <button class="pptb"   id="ppt1" onclick="setPpTrim(1)">2…n−1</button>
+        <button class="pptb"   id="ppt2" onclick="setPpTrim(2)">3…n−2</button>
+      </div>
+      <div id="ptable"></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="cb">
+      <div class="fm">
+        <div class="fn">Результат — угловой коэффициент ⟨b⟩</div>
+        <div class="fe" id="pp_eq">—</div>
+        <div class="fr" id="pp_b">b = —</div>
+      </div>
+      <div class="rls" id="pp_err" style="margin-top:14px"></div>
+    </div>
+  </div>
+
+  <!-- 03 Eg -->
+  <div class="sec"><span class="sec-n">03</span><span class="sec-t">Ширина запрещённой зоны E<sub>g</sub></span><span class="sec-l"></span></div>
+  <div class="card">
+    <div class="cb">
+      <div class="fm" style="border-left-color:var(--R)">
+        <div class="fn">Рабочая формула</div>
+        <div class="fe hi">E<sub>g</sub> = −2k · (b / 1000)  [Дж]</div>
+        <div class="fs" id="eg_sub">—</div>
+        <div class="fr" id="eg_res">E<sub>g</sub> = —</div>
+      </div>
+      <div class="fm" style="border-left-color:var(--G);margin-top:14px">
+        <div class="fn">В электронвольтах</div>
+        <div class="fe hi" id="eg_evf">E<sub>g</sub> [эВ] = E<sub>g</sub> [Дж] / 1.602×10⁻¹⁹</div>
+        <div class="fr" id="eg_evr">E<sub>g</sub> = — эВ</div>
+      </div>
+      <div class="br">
+        <div class="sym">E<sub style="font-size:22px">g</sub></div>
+        <div>
+          <div class="lbl">Ширина запрещённой зоны нелегированного Ge</div>
+          <div class="val" id="eg_big">—</div>
+          <div class="lbl" style="margin-top:6px">Табличное: 0.66 эВ</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 04 Погрешности -->
+  <div class="sec"><span class="sec-n">04</span><span class="sec-t">Полная цепочка погрешностей</span><span class="sec-l"></span></div>
+  <div class="card">
+    <div class="cb">
+      <div class="fm">
+        <div class="fn">Составляющие δσ на линейном участке (средние значения)</div>
+        <div class="fe">δσ = √(δU<sub>P</sub>² + δI² + δl² + δA²)</div>
+      </div>
+      <div class="rls" id="err_sig"></div>
+      <div class="fm" style="margin-top:18px">
+        <div class="fn">Погрешность E<sub>g</sub></div>
+        <div class="fe">δE<sub>g</sub> = δb = Δb / |⟨b⟩|</div>
+        <div class="fe">ΔE<sub>g</sub> = |E<sub>g</sub>| · δb</div>
+      </div>
+      <div class="rls" id="err_eg"></div>
+    </div>
+  </div>
+
+  <!-- 05 Сравнение -->
+  <div class="sec"><span class="sec-n">05</span><span class="sec-t">Сравнение с табличным значением</span><span class="sec-l"></span></div>
+  <div class="card"><div class="cb"><div id="cmp"><div class="nt i"><span>ℹ</span><span>Введите данные для сравнения.</span></div></div></div></div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     ТАБ 5 — ПРОТОКОЛ
+═══════════════════════════════════════ -->
+<div id="tab-proto" class="tab">
+  <div class="pg-t">Протокол</div>
+  <div class="pg-s">Вывод напишите самостоятельно — ниже указаны ключевые данные.</div>
+  <div class="card">
+    <div class="ch dk" style="border-radius:6px 6px 0 0">
+      <span style="color:var(--C);opacity:.85;font-family:var(--mono);font-size:11px;letter-spacing:1px;text-transform:uppercase">Текст протокола</span>
+      <button class="btn" style="background:rgba(247,231,206,.12);color:var(--C);border-color:rgba(247,231,206,.25);font-size:10px;letter-spacing:1px" onclick="copyProto()">Скопировать</button>
+    </div>
+    <div class="proto" id="proto">Введите данные для генерации протокола...</div>
+  </div>
+</div>
+
+</div><!-- /wrap -->
+<div class="toast" id="toast">Скопировано ✓</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════
+//  КОНСТАНТЫ
+// ═══════════════════════════════════════════════════════════
+const KB  = 1.381e-23;   // Дж/К — постоянная Больцмана
+const EV  = 1.602e-19;   // Дж/эВ
+const EGT = 0.66;        // эВ — табличное для Ge
+
+// ═══════════════════════════════════════════════════════════
+//  СОСТОЯНИЕ
+// ═══════════════════════════════════════════════════════════
+let rows    = [];          // [{tc, up, vmR, vmFixed}]
+let gChart  = null;
+let scMode  = 'auto';
+let ppTrim  = 0;
+let rfrom   = 0;           // индекс первой точки линейного участка
+let rto     = 0;           // индекс последней точки
+let defVmR  = 200;         // начальное значение предела для новых строк
+
+// ═══════════════════════════════════════════════════════════
+//  ДЕМО-ДАННЫЕ  [Tc °C, Up мВ, предел мВ]
+// ═══════════════════════════════════════════════════════════
+const DEMO=[
+  [170,6.2,200],[160,8.8,200],[150,13.0,200],[140,20.0,200],
+  [130,31.5,200],[120,51.0,200],[110,87.0,200],[100,158.0,200],
+  [95,215,2000],[90,300,2000],[85,425,2000],[80,620,2000],
+  [75,920,2000],[70,1400,2000],[65,2150,2000],[60,3400,2000],
+  [55,5500,20000],[50,9000,20000],[45,15000,20000],[40,26000,20000],
+  [35,46000,20000],[30,82000,20000],[25,150000,20000]
+];
+
+// ═══════════════════════════════════════════════════════════
+//  СТЬЮДЕНТ P=0.90
+// ═══════════════════════════════════════════════════════════
+const TST={1:6.314,2:2.920,3:2.353,4:2.132,5:2.015,6:1.943,
+           7:1.895,8:1.860,9:1.833,10:1.812,11:1.796,12:1.782,
+           13:1.771,14:1.761,15:1.753,20:1.725,30:1.697,60:1.671,120:1.658};
+function tst(f){
+  if(f<=0)return NaN;
+  const ks=Object.keys(TST).map(Number).sort((a,b)=>a-b);
+  for(let i=0;i<ks.length-1;i++){
+    if(f<=ks[i])return TST[ks[i]];
+    if(f<ks[i+1])return TST[ks[i]]+(TST[ks[i+1]]-TST[ks[i]])*(f-ks[i])/(ks[i+1]-ks[i]);
+  }
+  return 1.645;
+}
+
+// ═══════════════════════════════════════════════════════════
+//  ФОРМАТИРОВАНИЕ ЧИСЕЛ
+//  Ключевое исправление: правильная надстрочная запись степени
+// ═══════════════════════════════════════════════════════════
+const SUPMAP={'-':'⁻','0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹'};
+function toSup(e){return String(e).split('').map(c=>SUPMAP[c]||c).join('');}
+
+/** Для HTML-вывода: использует <sup> теги с правильным знаком минус */
+function sciH(x,s=4){
+  if(!isFinite(x)||x==null)return '—';
+  const a=Math.abs(x);
+  if(a===0)return '0';
+  if(a>=0.001&&a<1e5)return parseFloat(x.toPrecision(s)).toString();
+  const e=Math.floor(Math.log10(a)),m=parseFloat((x/Math.pow(10,e)).toFixed(s-1));
+  return `${m}·10<sup>${toSup(e)}</sup>`;
+}
+/** Для текстового вывода (протокол): использует Unicode надстрочные */
+function sciT(x,s=4){
+  if(!isFinite(x)||x==null)return '—';
+  const a=Math.abs(x);
+  if(a===0)return '0';
+  if(a>=0.001&&a<1e5)return parseFloat(x.toPrecision(s)).toString();
+  const e=Math.floor(Math.log10(a)),m=parseFloat((x/Math.pow(10,e)).toFixed(s-1));
+  return `${m}·10${toSup(e)}`;
+}
+/** Общее форматирование до 4 знаков — всегда читаемый вид */
+function f4(x){
+  if(!isFinite(x)||x==null)return '—';
+  const a=Math.abs(x);
+  if(a===0)return '0';
+  // Числа в читаемом диапазоне — обычная запись
+  if(a>=0.001&&a<10000)return parseFloat(x.toPrecision(4)).toString();
+  // Остальное — научная запись с Unicode надстрочными (для текста/протокола)
+  const e=Math.floor(Math.log10(a)),m=parseFloat((x/Math.pow(10,e)).toFixed(3));
+  return `${m}·10${toSup(e)}`;
+}
+/** f4 для HTML — использует <sup> для степени */
+function f4H(x){
+  if(!isFinite(x)||x==null)return '—';
+  const a=Math.abs(x);
+  if(a===0)return '0';
+  if(a>=0.001&&a<10000)return parseFloat(x.toPrecision(4)).toString();
+  const e=Math.floor(Math.log10(a)),m=parseFloat((x/Math.pow(10,e)).toFixed(3));
+  return `${m}·10<sup>${e}</sup>`;
+}
+function fmtTick(v){
+  if(v===0)return '0';
+  const a=Math.abs(v);
+  if(a>=0.001&&a<10000)return parseFloat(v.toPrecision(4)).toString();
+  const e=Math.floor(Math.log10(a)),m=parseFloat((v/Math.pow(10,e)).toFixed(2));
+  return `${m}·10${toSup(e)}`;
+}
+
+// ═══════════════════════════════════════════════════════════
+//  ОСИ ГРАФИКА
+// ═══════════════════════════════════════════════════════════
+function niceS(r,t){if(!r||r<=0)return 1;const rw=r/t,e=Math.floor(Math.log10(rw)),p=Math.pow(10,e),m=rw/p;return m<=1?p:m<=2?2*p:m<=5?5*p:10*p;}
+function forceS(r,mult){if(!r||r<=0)return 1;const e=Math.floor(Math.log10(r/7)),p=Math.pow(10,e);let s=mult*p;if(r/s<3)s/=2;return s;}
+
+// ═══════════════════════════════════════════════════════════
+//  ПАРАМЕТРЫ УСТАНОВКИ
+// ═══════════════════════════════════════════════════════════
+function getP(){
+  const l  =parseFloat(document.getElementById('p_l').value)  ||0.020;
+  const b  =parseFloat(document.getElementById('p_b').value)  ||0.010;
+  const d  =parseFloat(document.getElementById('p_d').value)  ||0.001;
+  const I  =parseFloat(document.getElementById('p_I').value)  ||0.005;
+  const vmC=parseFloat(document.getElementById('p_vmC').value)||1.0;
+  const dL =parseFloat(document.getElementById('p_dL').value) ||1.0;
+  const dA =parseFloat(document.getElementById('p_dA').value) ||2.0;
+  const dI =parseFloat(document.getElementById('p_dI').value) ||1.0;
+  const A=b*d;
+  return{l,b,d,I,A,lA:l/A,vmC,dL,dA,dI};
+}
+function vmDeltaMV(p,rng){return p.vmC/100*rng;}
+
+function updParams(){
+  const p=getP();
+  document.getElementById('v_A').innerHTML=sciH(p.A);
+  document.getElementById('v_lA').innerHTML=sciH(p.lA);
+  document.getElementById('ptbody').innerHTML=[
+    ['l',      sciT(p.l,4),        'м',         `δl = ${p.dL} %`],
+    ['b',      sciT(p.b,4),        'м',         ''],
+    ['d',      sciT(p.d,4),        'м',         `δA ≈ ${p.dA} %`],
+    ['A=b·d',  sciT(p.A,4),        'м²',        ''],
+    ['l/A',    sciT(p.lA,4),       'м⁻¹',       ''],
+    ['I',      `${p.I*1000} мА`,   '',          `δI = ${p.dI} %`],
+    ['кл. В.', `${p.vmC} %`,       '',          'класс точности вольтметра'],
+    ['σ',      'I·l/(A·U_P)',      'Ом⁻¹·м⁻¹', 'рабочая формула'],
+  ].map(([s,v,u,n])=>`<tr><td>${s}</td><td>${v}</td><td>${u}</td><td>${n}</td></tr>`).join('');
+  document.getElementById('vmsum').innerHTML=
+    [{r:200,l:'200 мВ'},{r:2000,l:'2 В'},{r:20000,l:'20 В'}].map(v=>`
+    <div style="display:flex;gap:10px;align-items:center;font-size:11px;padding:5px 0;border-bottom:1px solid var(--border2)">
+      <span style="font-family:var(--mono);font-weight:600;color:var(--navy);min-width:60px">${v.l}</span>
+      <span style="color:var(--ink3)">→</span>
+      <span style="font-family:var(--mono)">ΔU = ${p.vmC}% × ${v.r} мВ = <strong>${f4(vmDeltaMV(p,v.r))} мВ</strong></span>
+    </div>`).join('');
+}
+
+// ═══════════════════════════════════════════════════════════
+//  РАСЧЁТ ОДНОЙ СТРОКИ
+// ═══════════════════════════════════════════════════════════
+function calcRow(r){
+  const p=getP();
+  const Tc=parseFloat(r.tc), Up=parseFloat(r.up);
+  if(!isFinite(Tc)||!isFinite(Up)||Up<=0)return null;
+  const T=Tc+273.15;
+  const invT=1000/T;
+  // σ = I·l/(A·U_P),  U_P переводим мВ → В
+  const sigma=p.I*p.lA/(Up/1000);
+  const lnSig=Math.log(sigma);
+  const rng=r.vmR||defVmR;
+  const dU_mV=vmDeltaMV(p,rng);          // абсолютная ΔU в мВ
+  const dU_rel=dU_mV/Up*100;             // δU в %
+  // полная относительная погрешность σ
+  const dSig=Math.sqrt(
+    (dU_rel/100)**2+
+    (p.dI /100)**2+
+    (p.dL /100)**2+
+    (p.dA /100)**2
+  )*100;
+  return{T,invT,sigma,lnSig,dU_mV,dU_rel,dSig};
+}
+
+// ═══════════════════════════════════════════════════════════
+//  ТАБЛИЦА ИЗМЕРЕНИЙ
+//  КРИТИЧЕСКОЕ ИСПРАВЛЕНИЕ: ввод данных НЕ вызывает renderTable
+//  Данные сохраняются onchange/onblur, пересчёт только расчётных ячеек
+// ═══════════════════════════════════════════════════════════
+function rangeOpts(sel){
+  return [[200,'200 мВ'],[2000,'2 В'],[20000,'20 В']]
+    .map(([v,l])=>`<option value="${v}"${parseFloat(sel)===v?' selected':''}>${l}</option>`)
+    .join('');
+}
+
+function renderTable(){
+  // Полная отрисовка — только при инициализации, добавлении/удалении строк
+  document.getElementById('mbody').innerHTML=rows.map((r,i)=>`
+    <tr id="tr${i}">
+      <td>${i+1}</td>
+      <td><input class="ci" id="tc${i}" type="number" value="${r.tc}" placeholder="170"
+        onchange="rows[${i}].tc=this.value;updRow(${i})"
+        onkeydown="if(event.key==='Enter'){rows[${i}].tc=this.value;updRow(${i})}"></td>
+      <td id="tdup${i}"><input class="ci" id="up${i}" type="number" value="${r.up}" placeholder="6.2"
+        onchange="rows[${i}].up=this.value;updRow(${i})"
+        onkeydown="if(event.key==='Enter'){rows[${i}].up=this.value;updRow(${i})}"></td>
+      <td><select id="rng${i}" onchange="rows[${i}].vmR=parseFloat(this.value);rows[${i}].vmFixed=true;updRow(${i})">${rangeOpts(r.vmR)}</select></td>
+      <td class="c2" id="du${i}">—</td>
+      <td class="c2" id="dur${i}">—</td>
+      <td class="c2" id="ds${i}">—</td>
+      <td class="c2" id="tK${i}">—</td>
+      <td class="c2" id="iT${i}">—</td>
+      <td class="c2" id="sg${i}">—</td>
+      <td class="hi" id="ls${i}">—</td>
+      <td><button class="db" onclick="delRow(${i})">✕</button></td>
+    </tr>`).join('');
+  // Пересчитываем расчётные ячейки без перерисовки всей таблицы
+  rows.forEach((_,i)=>updRowCells(i));
+}
+
+/** Обновить расчётные ячейки одной строки — DOM не пересоздаётся */
+function updRowCells(i){
+  const r=rows[i];
+  const c=calcRow(r);
+  const up=parseFloat(r.up);
+  const vmR=r.vmR||defVmR;
+  const warn=isFinite(up)&&up>vmR*0.8;
+
+  // Подсветка ячейки Up
+  const tdUp=document.getElementById('tdup'+i);
+  const inUp=document.getElementById('up'+i);
+  if(tdUp){tdUp.className=warn?'wc':'';}
+  if(inUp){inUp.style.color=warn?'var(--WN)':'';inUp.style.fontWeight=warn?'600':'';}
+
+  const set=(id,v)=>{const e=document.getElementById(id);if(e)e.innerHTML=v;};
+  if(!c){
+    ['du','dur','ds','tK','iT','sg','ls'].forEach(p=>set(p+i,'—'));
+    return;
+  }
+  set('du'+i,  f4(c.dU_mV)+' мВ');
+  set('dur'+i, `<span style="${c.dU_rel>5?'color:var(--WN);font-weight:600':''}">${f4(c.dU_rel)} %</span>`);
+  set('ds'+i,  f4(c.dSig)+' %');
+  set('tK'+i,  f4(c.T));
+  set('iT'+i,  f4(c.invT));
+  set('sg'+i,  sciH(c.sigma,4));
+  set('ls'+i,  f4(c.lnSig));
+}
+
+/** Вызывается при изменении данных в строке: обновляет ячейки и запускает recalcGraphOnly */
+function updRow(i){
+  updRowCells(i);
+  recalcGraphOnly();
+}
+
+function addRow(){
+  rows.push({tc:'',up:'',vmR:defVmR,vmFixed:false});
+  renderTable();
+  recalcGraphOnly();
+}
+function delRow(i){
+  rows.splice(i,1);
+  renderTable();
+  recalcGraphOnly();
+}
+function fillDemo(){
+  rows=DEMO.map(d=>({tc:String(d[0]),up:String(d[1]),vmR:d[2],vmFixed:true}));
+  // Авто-устанавливаем диапазон слайдеров под собственную проводимость (первые 16 точек)
+  rfrom=0; rto=15;
+  renderTable();
+  recalcGraphOnly();
+  showToast('Демо-данные загружены ✓');
+}
+// ═══════════════════════════════════════════════════════════
+//  ВАЛИДНЫЕ ТОЧКИ
+// ═══════════════════════════════════════════════════════════
+function validPts(){
+  return rows.map((r,i)=>{
+    const c=calcRow(r);
+    return c?{...c,rowIdx:i,tc:parseFloat(r.tc)}:null;
+  }).filter(Boolean);
+}
+
+// ═══════════════════════════════════════════════════════════
+//  СЛАЙДЕРЫ — обновляют метки без сброса позиции
+// ═══════════════════════════════════════════════════════════
+function updSliders(vp){
+  const n=vp.length;
+  const rf=document.getElementById('rfrom'),rt=document.getElementById('rto');
+  const prevMax=parseInt(rf.max)||0;
+  rf.max=Math.max(0,n-1); rt.max=Math.max(0,n-1);
+  // Инициализация при первом появлении данных
+  if(prevMax===0&&n>0){rfrom=0;rto=Math.max(0,n-1);rf.value=rfrom;rt.value=rto;}
+  else{
+    rfrom=Math.min(Math.max(0,rfrom),n-1);
+    rto  =Math.min(Math.max(0,rto),  n-1);
+    if(rfrom>rto)rto=rfrom;
+    rf.value=rfrom; rt.value=rto;
+  }
+  updSliderLabels(vp);
+}
+function updSliderLabels(vp){
+  const pF=vp[rfrom],pT=vp[rto];
+  document.getElementById('rvfrom').textContent=pF?`№${rfrom+1}  (${pF.tc}°C, T=${f4(pF.T)} К)`:'—';
+  document.getElementById('rvto').textContent  =pT?`№${rto+1}  (${pT.tc}°C, T=${f4(pT.T)} К)`:'—';
+  const cnt=rto-rfrom+1;
+  document.getElementById('rinfo').textContent=cnt>=2
+    ?`Линейный участок: точки ${rfrom+1}–${rto+1} (${cnt} точек). 1000/T от ${f4(vp[rfrom]?.invT)} до ${f4(vp[rto]?.invT)} К⁻¹`
+    :'Выделите не менее 2 точек.';
+}
+function onSlider(){
+  rfrom=parseInt(document.getElementById('rfrom').value)||0;
+  rto  =parseInt(document.getElementById('rto').value)  ||0;
+  if(rfrom>rto){rto=rfrom;document.getElementById('rto').value=rto;}
+  const vp=validPts();
+  updSliderLabels(vp);
+  recalcGraphOnly();
+}
+
+// ═══════════════════════════════════════════════════════════
+//  МНК
+// ═══════════════════════════════════════════════════════════
+function mnk(pts){
+  const n=pts.length;if(n<2)return null;
+  let sx=0,sy=0,sxy=0,sx2=0;
+  for(const p of pts){sx+=p.x;sy+=p.y;sxy+=p.x*p.y;sx2+=p.x*p.x;}
+  const D=n*sx2-sx*sx;if(Math.abs(D)<1e-30)return null;
+  const b=(n*sxy-sx*sy)/D,a=(sy-b*sx)/n;
+  const yM=sy/n;let ssR=0,ssT=0;
+  for(const p of pts){ssR+=(p.y-(a+b*p.x))**2;ssT+=(p.y-yM)**2;}
+  const R2=ssT>0?1-ssR/ssT:1;
+  let sB=NaN;
+  if(n>2){const sxc=sx2-sx*sx/n;sB=sxc>0?Math.sqrt(ssR/(n-2)/sxc):NaN;}
+  return{a,b,R2,sB,n};
+}
+
+// ═══════════════════════════════════════════════════════════
+//  МЕТОД ПАРНЫХ ТОЧЕК
+// ═══════════════════════════════════════════════════════════
+function mpt(pts,trim){
+  const used=pts.slice(trim,trim>0?pts.length-trim:undefined);
+  const n=used.length;if(n<4)return null;
+  const half=Math.floor(n/2),odd=(n%2!==0);
+  const lo=used.slice(0,half),hi=used.slice(odd?half+1:half);
+  const k=Math.min(lo.length,hi.length);if(k<2)return null;
+  const bis=lo.slice(0,k).map((l,i)=>({
+    li:l.origIdx,ui:hi[i].origIdx,
+    xi:l.x,xj:hi[i].x,yi:l.y,yj:hi[i].y,
+    bi:(hi[i].y-l.y)/(hi[i].x-l.x)
+  }));
+  const bm=bis.reduce((s,r)=>s+r.bi,0)/k;
+  const var_=bis.reduce((s,r)=>s+(r.bi-bm)**2,0)/(k*(k-1));
+  const sB=Math.sqrt(var_),t=tst(k-1);
+  return{bis,bm,sB,dB:t*sB,t,k};
+}
+
+// ═══════════════════════════════════════════════════════════
+//  ГРАФИК
+// ═══════════════════════════════════════════════════════════
+function axisBounds(allPts,reg){
+  if(!allPts.length)return{xMin:2,xMax:4,yMin:-2,yMax:10,xS:.5,yS:2};
+  const xs=allPts.map(p=>p.x),ys=allPts.map(p=>p.y);
+  let xMn=Math.min(...xs),xMx=Math.max(...xs),yMn=Math.min(...ys),yMx=Math.max(...ys);
+  const xP=(xMx-xMn)*0.06||0.1,yP=(yMx-yMn)*0.08||0.5;
+  xMn-=xP;xMx+=xP;yMn-=yP;yMx+=yP;
+  if(reg){const y1=reg.a+reg.b*xMn,y2=reg.a+reg.b*xMx;yMn=Math.min(yMn,y1,y2)-yP;yMx=Math.max(yMx,y1,y2)+yP;}
+  const xR=xMx-xMn,yR=yMx-yMn;
+  let xS,yS;
+  if(scMode==='auto'){xS=niceS(xR,6);yS=niceS(yR,6);}
+  else{const m=parseFloat(scMode);xS=forceS(xR,m);yS=forceS(yR,m);}
+  return{xMin:Math.floor(xMn/xS)*xS,xMax:Math.ceil(xMx/xS)*xS,
+         yMin:Math.floor(yMn/yS)*yS,yMax:Math.ceil(yMx/yS)*yS,xS,yS};
+}
+function buildChart(aXY,lXY,reg){
+  const ctx=document.getElementById('gc').getContext('2d');
+  if(gChart){gChart.destroy();gChart=null;}
+  if(!aXY.length)return;
+  const b=axisBounds(aXY,reg);
+  const ld=reg?[{x:b.xMin,y:reg.a+reg.b*b.xMin},{x:b.xMax,y:reg.a+reg.b*b.xMax}]:[];
+
+  // Точки вне линейного участка — только они идут в датасет «Все точки»,
+  // чтобы исключить дублирование тултипа при наведении
+  const linSet=new Set(lXY.map(p=>p.origIdx));
+  const outsideXY=aXY.filter(p=>!linSet.has(p.origIdx));
+
+  gChart=new Chart(ctx,{type:'scatter',data:{datasets:[
+    {label:'Все точки',data:outsideXY.map(p=>({x:p.x,y:p.y})),
+     backgroundColor:'rgba(16,44,38,.18)',borderColor:'rgba(16,44,38,.35)',
+     pointRadius:4,pointHoverRadius:6,showLine:false},
+    {label:'Линейный участок',data:lXY.map(p=>({x:p.x,y:p.y})),
+     backgroundColor:'#234f44',borderColor:'#102C26',
+     pointRadius:6,pointHoverRadius:8,showLine:false},
+    {label:'МНК',data:ld,type:'line',
+     borderColor:'#8b2e1a',borderWidth:2.5,
+     pointRadius:0,pointHitRadius:0,showLine:true,fill:false}
+  ]},options:{responsive:true,maintainAspectRatio:false,
+    plugins:{
+      legend:{labels:{font:{family:'DM Mono',size:11},color:'#3a5048'}},
+      tooltip:{
+        callbacks:{
+          label:c=>{
+            if(c.dataset.label==='МНК')return null;
+            const lbl=c.dataset.label==='Линейный участок'?'лин. уч.':'вне участка';
+            return `${lbl}: (${f4(c.raw.x)}, ${f4(c.raw.y)})`;
+          }
+        },
+        filter:item=>item.dataset.label!=='МНК'
+      }
+    },
+    scales:{
+      x:{type:'linear',
+         title:{display:true,text:'1000/T, К⁻¹',font:{family:'DM Sans',size:12},color:'#3a5048'},
+         min:b.xMin,max:b.xMax,
+         ticks:{stepSize:b.xS,callback:fmtTick,font:{family:'DM Mono',size:10},color:'#7a9a92'},
+         grid:{color:'rgba(16,44,38,.06)'}},
+      y:{type:'linear',
+         title:{display:true,text:'ln σ',font:{family:'DM Sans',size:12},color:'#3a5048'},
+         min:b.yMin,max:b.yMax,
+         ticks:{stepSize:b.yS,callback:fmtTick,font:{family:'DM Mono',size:10},color:'#7a9a92'},
+         grid:{color:'rgba(16,44,38,.06)'}}
+    }
+  }});
+}
+
+// ═══════════════════════════════════════════════════════════
+//  ТАБЛИЦА ПАРНЫХ ТОЧЕК
+// ═══════════════════════════════════════════════════════════
+function renderPPT(pp){
+  const el=document.getElementById('ptable');
+  if(!pp){el.innerHTML='<div class="nt w"><span>⚠</span><span>Недостаточно точек (нужно ≥ 4, чтобы получить ≥ 2 пары).</span></div>';return;}
+  el.innerHTML=`<div class="tw"><table class="dt">
+    <thead><tr><th>Пара</th><th>i</th><th>j</th>
+      <th>(1000/T)<sub>i</sub></th><th>(1000/T)<sub>j</sub></th>
+      <th>ln σ<sub>i</sub></th><th>ln σ<sub>j</sub></th><th>b<sub>i</sub></th></tr></thead>
+    <tbody>${pp.bis.map((r,n)=>`<tr>
+      <td>${n+1}</td>
+      <td>${r.li!=null?r.li+1:'—'}</td><td>${r.ui!=null?r.ui+1:'—'}</td>
+      <td>${f4(r.xi)}</td><td>${f4(r.xj)}</td>
+      <td>${f4(r.yi)}</td><td>${f4(r.yj)}</td>
+      <td class="hi">${f4(r.bi)}</td></tr>`).join('')}
+    </tbody></table></div>`;
+}
+
+// ═══════════════════════════════════════════════════════════
+//  ГЛАВНЫЙ ПЕРЕСЧЁТ ГРАФИКА И РЕЗУЛЬТАТОВ
+//  (не трогает таблицу измерений — не перерисовывает её)
+// ═══════════════════════════════════════════════════════════
+function recalcGraphOnly(){
+  updParams();
+
+  const vp=validPts();
+  updSliders(vp);
+
+  const aXY=vp.map((pt,i)=>({x:pt.invT,y:pt.lnSig,origIdx:i}));
+  const lXY=aXY.filter((_,i)=>i>=rfrom&&i<=rto);
+
+  const reg=mnk(lXY);
+  buildChart(aXY,lXY,reg);
+
+  // МНК чипсы
+  if(reg){
+    document.getElementById('c_eq').textContent=`ln σ = ${f4(reg.a)} + (${f4(reg.b)})·x`;
+    document.getElementById('c_b').textContent=f4(reg.b);
+    document.getElementById('c_a').textContent=f4(reg.a);
+    document.getElementById('c_r2').textContent=reg.R2.toFixed(5);
+    document.getElementById('c_n').textContent=reg.n;
+  }else{
+    ['c_eq','c_b','c_a','c_r2','c_n'].forEach(id=>{document.getElementById(id).textContent='—';});
+  }
+
+  // МПТ
+  const pp=mpt(lXY,ppTrim);
+  renderPPT(pp);
+
+  if(pp){
+    document.getElementById('pp_eq').innerHTML=
+      `⟨b⟩ = ${f4(pp.bm)} &nbsp; σ⟨b⟩ = ${f4(pp.sB)} &nbsp; t(P=0.90, f=${pp.k-1}) = ${f4(pp.t)}`;
+    document.getElementById('pp_b').innerHTML=
+      `b = (${f4(pp.bm)} ± ${f4(pp.dB)})`;
+    document.getElementById('pp_err').innerHTML=[
+      {l:'⟨b⟩',             v:f4(pp.bm),  p:''},
+      {l:'σ⟨b⟩',            v:f4(pp.sB),  p:''},
+      {l:`t (P=0.90, f=${pp.k-1})`,v:f4(pp.t),p:''},
+      {l:'Δb = t·σ⟨b⟩',     v:f4(pp.dB),
+       p:`δb = ${f4(Math.abs(pp.dB/pp.bm)*100)} %`},
+    ].map(r=>rl(r.l,r.v,r.p)).join('');
+  }else{
+    document.getElementById('pp_eq').innerHTML='—';
+    document.getElementById('pp_b').innerHTML='b = —';
+    document.getElementById('pp_err').innerHTML='';
+  }
+
+  // Eg
+  const p=getP();
+  if(pp&&isFinite(pp.bm)){
+    const bK=pp.bm/1000;                   // наклон в К (не 1000/К)
+    const Eg_J=-2*KB*bK;                   // Дж
+    const Eg_eV=Eg_J/EV;                   // эВ
+    const dBrel=Math.abs(pp.dB/pp.bm);     // относительная
+    const dEg_J=Math.abs(Eg_J)*dBrel;      // ΔEg Дж
+    const dEg_eV=dEg_J/EV;                 // ΔEg эВ
+
+    document.getElementById('eg_sub').innerHTML=
+      `b = ${f4(pp.bm)}, b/1000 = ${f4(bK)} К`;
+    document.getElementById('eg_res').innerHTML=
+      `E<sub>g</sub> = −2 × ${sciH(KB)} × (${f4(pp.bm)}/1000) = ${sciH(Eg_J)} Дж`;
+    document.getElementById('eg_evf').innerHTML=
+      `E<sub>g</sub> = ${sciH(Eg_J)} / ${sciH(EV)} = ${f4H(Eg_eV)} эВ`;
+    document.getElementById('eg_evr').innerHTML=
+      `E<sub>g</sub> = (${f4H(Eg_eV)} ± ${f4H(dEg_eV)}) эВ`;
+    document.getElementById('eg_big').innerHTML=
+      `(${f4H(Eg_eV)} ± ${f4H(dEg_eV)}) эВ`;
+
+    // Погрешности σ
+    const linFull=vp.filter((_,i)=>i>=rfrom&&i<=rto);
+    const mDU=linFull.length?linFull.reduce((s,pt)=>s+pt.dU_rel,0)/linFull.length:NaN;
+    const mDS=linFull.length?linFull.reduce((s,pt)=>s+pt.dSig, 0)/linFull.length:NaN;
+    document.getElementById('err_sig').innerHTML=[
+      {l:'Средняя δU<sub>P</sub> (лин. уч.)',v:'',p:`${f4(mDU)} %`},
+      {l:'δI (ток образца)',                 v:'',p:`${p.dI} %`},
+      {l:'δl (длина)',                       v:'',p:`${p.dL} %`},
+      {l:'δA (сечение b·d)',                 v:'',p:`${p.dA} %`},
+      {l:'Средняя δσ (лин. уч.)',            v:'',p:`${f4(mDS)} %`},
+    ].map(r=>rl(r.l,r.v,r.p)).join('');
+
+    document.getElementById('err_eg').innerHTML=[
+      {l:'⟨b⟩ (МПТ)',                        v:f4(pp.bm),            p:''},
+      {l:'Δb',                               v:`±${f4(pp.dB)}`,      p:`${f4(dBrel*100)} %`},
+      {l:'E<sub>g</sub> [Дж]',               v:sciH(Eg_J),            p:''},
+      {l:'ΔE<sub>g</sub> [Дж]',              v:`±${sciH(dEg_J)}`,     p:''},
+      {l:'E<sub>g</sub> [эВ]',               v:`${f4H(Eg_eV)} эВ`,    p:''},
+      {l:'ΔE<sub>g</sub> [эВ]',              v:`±${f4H(dEg_eV)} эВ`,  p:`${f4(dBrel*100)} %`},
+    ].map(r=>rl(r.l,r.v,r.p)).join('');
+
+    // Сравнение
+    const diff=Math.abs(Eg_eV-EGT),relD=diff/EGT*100,ok=diff<=2*dEg_eV;
+    document.getElementById('cmp').innerHTML=`
+      <div class="fm">
+        <div class="fn">Сравнение с табличным значением</div>
+        <div class="fe">E<sub>g</sub><sup>эксп</sup> = ${f4H(Eg_eV)} ± ${f4H(dEg_eV)} эВ</div>
+        <div class="fe">E<sub>g</sub><sup>табл</sup> = ${EGT} эВ (нелегированный Ge)</div>
+        <div class="fe">|E<sub>g</sub><sup>эксп</sup> − E<sub>g</sub><sup>табл</sup>| = ${f4H(diff)} эВ (${f4(relD)} %)</div>
+      </div>
+      <div class="nt ${ok?'ok':'w'}">
+        <span>${ok?'✓':'⚠'}</span>
+        <span>${ok
+          ?`Результат согласуется с табличным. Расхождение ${f4(relD)} % ≤ 2·ΔE<sub>g</sub>.`
+          :`Расхождение ${f4(relD)} % > 2·ΔE<sub>g</sub>. Проверьте правильность выбора линейного участка.`
+        }</span>
+      </div>`;
+
+    updProto(pp,reg,Eg_J,Eg_eV,dEg_J,dEg_eV,dBrel,diff,relD,vp,linFull,p);
+  }else{
+    ['eg_sub','eg_res','eg_evf','eg_evr','eg_big','err_sig','err_eg'].forEach(id=>{
+      const e=document.getElementById(id);if(e)e.innerHTML='—';
+    });
+    document.getElementById('cmp').innerHTML='<div class="nt i"><span>ℹ</span><span>Введите данные для сравнения.</span></div>';
+    document.getElementById('proto').textContent='Введите данные для генерации протокола...';
+  }
+}
+
+/** Хелпер: строка результата */
+function rl(l,v,p){
+  return `<div class="rl"><span class="rll">${l}</span><span class="rlv">${v}</span><span class="rlp">${p}</span></div>`;
+}
+
+// ═══════════════════════════════════════════════════════════
+//  ПРОТОКОЛ — оформление по образцу lab203
+// ═══════════════════════════════════════════════════════════
+function updProto(pp,reg,Eg_J,Eg_eV,dEg_J,dEg_eV,dBrel,diff,relD,vp,linPts,p){
+  const el=document.getElementById('proto'); if(!el) return;
+  const D='─'.repeat(62);
+  const L=[];
+  const pad=(s,n)=>String(s).padEnd(n);
+
+  // ── Заголовок ──
+  L.push('ПРОТОКОЛ ЛАБОРАТОРНОЙ РАБОТЫ');
+  L.push('Работа 2.15  «Ширина запрещённой зоны германиевого полупроводника»');
+  L.push('СПбПУ Петра Великого');
+  L.push(D); L.push('');
+
+  // ── 1. Параметры ──
+  L.push('1. ПАРАМЕТРЫ ОБРАЗЦА');
+  L.push('');
+  L.push(`  l  = ${sciT(p.l,4)} м   (δl = ${p.dL} %)`);
+  L.push(`  b  = ${sciT(p.b,4)} м`);
+  L.push(`  d  = ${sciT(p.d,4)} м   (δA ≈ ${p.dA} %)`);
+  L.push(`  A  = b·d = ${sciT(p.A,4)} м²`);
+  L.push(`  l/A = ${sciT(p.lA,4)} м⁻¹`);
+  L.push(`  I  = ${p.I*1000} мА   (δI = ${p.dI} %)`);
+  L.push(`  Класс точности вольтметра = ${p.vmC} %`);
+  L.push(`  k  = 1.381·10⁻²³ Дж/К   (постоянная Больцмана)`);
+  L.push(`  E_g(табл.) = 0.66 эВ   (нелегированный Ge)`);
+  L.push('');
+
+  // ── 2. Таблица измерений ──
+  L.push(D);
+  L.push('2. ТАБЛИЦА ИЗМЕРЕНИЙ');
+  L.push('');
+  L.push('  σ = I·l/(A·U_P),  U_P в мВ → В');
+  L.push('');
+  L.push(`  | ${'№'.padEnd(3)} | ${'T, °C'.padEnd(7)} | ${'U_P, мВ'.padEnd(10)} | ${'T, К'.padEnd(8)} | ${'1000/T'.padEnd(8)} | ${'σ, Сm/м'.padEnd(12)} | ${'ln σ'.padEnd(8)} |`);
+  L.push(`  |${'-'.repeat(5)}|${'-'.repeat(9)}|${'-'.repeat(12)}|${'-'.repeat(10)}|${'-'.repeat(10)}|${'-'.repeat(14)}|${'-'.repeat(10)}|`);
+  let hasData=false;
+  vp.forEach((pt,i)=>{
+    hasData=true;
+    const inLin=(i>=rfrom&&i<=rto);
+    const mark=inLin?' *':'  ';
+    L.push(`  |${mark}${pad(i+1,3)}| ${pad(pt.tc,7)} | ${pad(sciT(parseFloat(rows[pt.rowIdx].up),5),10)} | ${pad(sciT(pt.T,5),8)} | ${pad(sciT(pt.invT,5),8)} | ${pad(sciT(pt.sigma,4),12)} | ${pad(sciT(pt.lnSig,5),8)} |`);
+  });
+  if(!hasData) L.push('  | Данные не введены                                                    |');
+  L.push('');
+  L.push('  * — точки линейного участка (область собственной проводимости)');
+  L.push('');
+
+  // ── 3. МНК ──
+  L.push(D);
+  L.push('3. МНК: ln σ = a₀ + b·(1000/T)   (контроль линейности)');
+  L.push('');
+  if(reg){
+    L.push(`  a₀   = ${sciT(reg.a,5)}`);
+    L.push(`  b    = ${sciT(reg.b,5)}`);
+    L.push(`  R²   = ${reg.R2.toFixed(5)}`);
+    L.push(`  n    = ${reg.n} точек`);
+  } else {
+    L.push('  Нет данных.');
+  }
+  L.push('');
+
+  // ── 4. Метод парных точек ──
+  L.push(D);
+  L.push('4. МЕТОД ПАРНЫХ ТОЧЕК');
+  L.push('');
+  if(pp&&linPts.length>=4){
+    L.push(`  n = ${linPts.length} точек лин. участка,  k = ${pp.k} пар,  f = k-1 = ${pp.k-1}`);
+    L.push('');
+    L.push(`  | ${'Пара'.padEnd(5)} | ${'i'.padEnd(3)} | ${'j'.padEnd(3)} | ${'(1000/T)_i'.padEnd(11)} | ${'(1000/T)_j'.padEnd(11)} | ${'ln σ_i'.padEnd(10)} | ${'ln σ_j'.padEnd(10)} | ${'b_i'.padEnd(10)} |`);
+    L.push(`  |${'-'.repeat(7)}|${'-'.repeat(5)}|${'-'.repeat(5)}|${'-'.repeat(13)}|${'-'.repeat(13)}|${'-'.repeat(12)}|${'-'.repeat(12)}|${'-'.repeat(12)}|`);
+    pp.bis.forEach((r,n)=>{
+      L.push(`  | ${pad(n+1,5)} | ${pad(r.li!=null?r.li+1:'—',3)} | ${pad(r.ui!=null?r.ui+1:'—',3)} | ${pad(sciT(r.xi,5),11)} | ${pad(sciT(r.xj,5),11)} | ${pad(sciT(r.yi,5),10)} | ${pad(sciT(r.yj,5),10)} | ${pad(sciT(r.bi,5),10)} |`);
+    });
+    L.push('');
+    L.push(`  <b>              = ${sciT(pp.bm,5)}`);
+    L.push(`  Sum(b_i-<b>)^2  = ${sciT(pp.bis.reduce((s,r)=>s+(r.bi-pp.bm)**2,0),5)}`);
+    L.push(`  sigma_<b> = sqrt(Sum / (k*(k-1))) = ${sciT(pp.sB,5)}`);
+    L.push(`  t(0.90; ${pp.k-1})        = ${sciT(pp.t,4)}`);
+    L.push(`  Delta_b = t * sigma_<b>  = ${sciT(pp.dB,5)}`);
+    L.push(`  delta_b = Delta_b / |<b>| = ${(Math.abs(pp.dB/pp.bm)*100).toFixed(2)} %`);
+    L.push('');
+    L.push(`  Результат: b = (${sciT(pp.bm,5)} +/- ${sciT(pp.dB,5)})`);
+  } else {
+    L.push('  Нет данных (нужно не менее 4 точек на линейном участке).');
+  }
+  L.push('');
+
+  // ── 5. Расчёт E_g ──
+  L.push(D);
+  L.push('5. ШИРИНА ЗАПРЕЩЁННОЙ ЗОНЫ E_g');
+  L.push('');
+  if(pp){
+    L.push('  E_g = -2 * k * (b / 1000)');
+    L.push(`      = -2 * 1.381*10^-23 * (${sciT(pp.bm,5)} / 1000)`);
+    L.push(`      = ${sciT(Eg_J,5)} Дж`);
+    L.push('');
+    L.push(`  E_g = ${sciT(Eg_J,5)} / 1.602*10^-19`);
+    L.push(`      = ${sciT(Eg_eV,5)} эВ`);
+  } else {
+    L.push('  Нет данных.');
+  }
+  L.push('');
+
+  // ── 6. Погрешности ──
+  L.push(D);
+  L.push('6. ПОГРЕШНОСТИ');
+  L.push('');
+  if(pp){
+    const mDU=linPts.length?linPts.reduce((s,pt)=>s+pt.dU_rel,0)/linPts.length:NaN;
+    const mDS=linPts.length?linPts.reduce((s,pt)=>s+pt.dSig, 0)/linPts.length:NaN;
+    L.push('  Погрешность σ (косвенная):');
+    L.push(`  delta_sigma = sqrt(delta_U^2 + delta_I^2 + delta_l^2 + delta_A^2)`);
+    L.push(`  Средняя delta_U на лин. участке = ${sciT(mDU,3)} %`);
+    L.push(`  delta_I = ${p.dI} %,  delta_l = ${p.dL} %,  delta_A = ${p.dA} %`);
+    L.push(`  Средняя delta_sigma на лин. участке = ${sciT(mDS,3)} %`);
+    L.push('');
+    L.push('  Погрешность E_g (из метода парных точек):');
+    L.push(`  delta_E_g = delta_b = Delta_b / |<b>| = ${(dBrel*100).toFixed(2)} %`);
+    L.push(`  Delta_E_g = |E_g| * delta_b = ${sciT(dEg_J,4)} Дж = ${sciT(dEg_eV,4)} эВ`);
+    L.push('');
+    L.push(`  E_g = (${sciT(Eg_eV,5)} +/- ${sciT(dEg_eV,4)}) эВ`);
+  } else {
+    L.push('  Нет данных.');
+  }
+  L.push('');
+
+  // ── 7. Сравнение ──
+  L.push(D);
+  L.push('7. СРАВНЕНИЕ С ТАБЛИЧНЫМ ЗНАЧЕНИЕМ');
+  L.push('');
+  if(pp){
+    L.push(`  E_g(эксп.) = (${sciT(Eg_eV,5)} +/- ${sciT(dEg_eV,4)}) эВ`);
+    L.push(`  E_g(табл.) = 0.66 эВ   (нелегированный Ge)`);
+    L.push(`  |E_g(эксп.) - E_g(табл.)| = ${sciT(diff,4)} эВ  (${sciT(relD,3)} %)`);
+    L.push(`  ${diff<=2*dEg_eV
+      ?'Результат СОГЛАСУЕТСЯ с табличным значением (расхождение <= 2*Delta_E_g).'
+      :'Результат РАСХОДИТСЯ с табличным значением — проверьте выбор линейного участка.'}`);
+  } else {
+    L.push('  Нет данных.');
+  }
+  L.push('');
+
+  // ── 8. Вывод ──
+  L.push(D);
+  L.push('8. ВЫВОД');
+  L.push('');
+  if(pp){
+    L.push('  [Напишите вывод самостоятельно, опираясь на факты ниже]');
+    L.push('');
+    L.push(`  R² = ${reg?.R2?.toFixed(4)} — линейность ln σ = f(1000/T) подтверждает`);
+    L.push('  экспоненциальный закон σ(T) в области собственной проводимости.');
+    L.push('');
+    L.push(`  E_g = (${sciT(Eg_eV,5)} +/- ${sciT(dEg_eV,4)}) эВ`);
+    L.push(`  Погрешность: ${(dBrel*100).toFixed(1)} %`);
+    L.push(`  Расхождение с табличным (0.66 эВ): ${sciT(relD,3)} %`);
+  } else {
+    L.push('  [Введите данные для генерации вывода]');
+  }
+  L.push('');
+  L.push(D);
+  L.push('Дата выполнения: '+new Date().toLocaleDateString('ru-RU'));
+
+  el.textContent=L.join('\n');
+}
+
+// ═══════════════════════════════════════════════════════════
+//  UI
+// ═══════════════════════════════════════════════════════════
+function go(id,btn){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
+  document.querySelectorAll('.nb').forEach(b=>b.classList.remove('on'));
+  document.getElementById('tab-'+id).classList.add('on');
+  btn.classList.add('on');
+  if(id==='calc')recalcGraphOnly();
+}
+function setScale(m,btn){
+  scMode=m;
+  document.querySelectorAll('[id^="sc-"]').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');recalcGraphOnly();
+}
+function setPpTrim(n){
+  ppTrim=n;
+  [0,1,2].forEach(i=>{const b=document.getElementById('ppt'+i);if(b)b.classList.toggle('on',i===n);});
+  recalcGraphOnly();
+}
+/** Единственная точка входа полного пересчёта (параметры + таблица + граф) */
+function recalc(){
+  updParams();
+  rows.forEach((_,i)=>updRowCells(i));
+  recalcGraphOnly();
+}
+function showToast(msg){
+  const t=document.getElementById('toast');t.textContent=msg;
+  t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200);
+}
+function copyProto(){
+  navigator.clipboard.writeText(document.getElementById('proto').textContent)
+    .then(()=>showToast('Скопировано ✓'));
+}
+
+// ═══════════════════════════════════════════════════════════
+//  ИНИЦИАЛИЗАЦИЯ
+// ═══════════════════════════════════════════════════════════
+rows=Array.from({length:20},()=>({tc:'',up:'',vmR:200,vmFixed:false}));
+renderTable();
+updParams();
+</script>
+</body>
+</html>
