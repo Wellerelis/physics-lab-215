@@ -1,8 +1,9 @@
-# Работа 2.15 — Ширина запрещённой зоны германиевого полупроводника
+# physics-lab-215
+Automation of Calculations in Physics Lab Work 2.15
 
 Интерактивный веб-калькулятор для обработки данных лабораторной работы 2.15 кафедры общей физики СПбПУ Петра Великого.
 
-**[→ Открыть сайт](https://your-username.github.io/lab215/lab215.html)**
+**[→ Открыть сайт](https://wellerelis.github.io/physics-lab-215/)**
 
 ---
 
@@ -198,7 +199,7 @@ https://your-username.github.io/lab215/lab215.html
 
 ```
 lab215/
-├── lab215.html     # Весь сайт в одном файле
+├── index.html     # Весь сайт в одном файле
 └── README.md       # Эта документация
 ```
 
